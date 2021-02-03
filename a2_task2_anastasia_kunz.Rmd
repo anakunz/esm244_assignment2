@@ -1,0 +1,104 @@
+---
+title: "Palmetto Binary Logistic Regression"
+author: "Anastasia Kunz"
+date: "2/2/2021"
+output:
+  html_document
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(here)
+
+
+```
+
+
+
+```{r}
+palmetto <- read_csv(here("data", "palmetto.csv"),
+                     col_types = cols(.default = 'c')) %>% 
+  mutate(height = as.numeric(height)) %>% 
+  mutate(length = as.numeric(length)) %>% 
+  mutate(width = as.numeric(width)) %>% 
+  mutate(green_lvs = as.numeric(green_lvs))
+```
+
+### Data Visualizations
+
+2-3 finalized data visualizations with fig capts exploring differeences in height canopy length, canopy width, and green leaves for the two species
+
+below each visualization add a short (1 sentence) statement on the takeaway
+
+```{r}
+palmetto_subset <- palmetto %>% 
+  select(species, height, length, width, green_lvs)
+```
+
+
+height
+
+```{r}
+ggplot(data = palmetto_subset, aes(x = height))+
+  geom_histogram()+
+  facet_wrap(~ species)
+
+ggplot(data = palmetto_subset, aes(x = species, y = height))+
+  geom_boxplot()
+```
+
+```{r}
+ggplot(data = palmetto_subset, aes(x = length))+
+  geom_histogram()+
+  facet_wrap(~ species)
+
+ggplot(data = palmetto_subset, aes(x = species, y = length))+
+  geom_boxplot()
+```
+
+
+```{r}
+ggplot(data = palmetto_subset, aes(x = width))+
+  geom_histogram()+
+  facet_wrap(~ species)
+
+ggplot(data = palmetto_subset, aes(x = species, y = width))+
+  geom_boxplot()
+```
+
+
+
+```{r}
+ggplot(data = palmetto_subset, aes(x = green_lvs))+
+  geom_histogram()+
+  facet_wrap(~ species)
+
+ggplot(data = palmetto_subset, aes(x = species, y = green_lvs))+
+  geom_boxplot()
+```
+
+
+
+#### binary logistic regression
+
+using plant height, canopy length, canopy width, and green leaves as predictor variables to understand how they can relate to probability of a plant being Serenoa repens or Sabal etonia
+
+
+#### Section evaluating how successful this mdel is
+
+how successfully can it classify a plant as the correct species using a 50% cutoff
+
+make finalized table
+
+
+### Citation
+
+Abrahamson, W.G. 2019. Survival, growth and biomass estimates of two dominant palmetto species of south-central Florida from 1981 - 2017, ongoing at 5-year intervals ver 1. Environmental Data Initiative. https://doi.org/10.6073/pasta/f2f96ec76fbbd4b9db431c79a770c4d5
+
+
+
+
+
+
