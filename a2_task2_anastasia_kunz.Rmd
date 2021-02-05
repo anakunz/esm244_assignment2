@@ -13,6 +13,7 @@ library(tidyverse)
 library(here)
 library(patchwork)
 library(broom)
+library(kableExtra)
 
 
 ```
@@ -24,14 +25,14 @@ palmetto <- read_csv(here("data", "palmetto.csv"),
   mutate(height = as.numeric(height)) %>% 
   mutate(length = as.numeric(length)) %>% 
   mutate(width = as.numeric(width)) %>% 
-  mutate(species = as.numeric(species)) %>% 
+  mutate(species = as.factor(species)) %>% 
   mutate(green_lvs = as.numeric(green_lvs)) %>% 
   mutate(species_full = case_when(species == "1" ~ "Serenoa repens",
-                                  species == "2" ~ "Serenoa etonia"))
+                                  species == "2" ~ "Serenoa etonia")) %>% 
+  mutate(species_full = as.factor(species_full))
 
 palmetto_subset <- palmetto %>% 
-  select(species, species_full, height, length, width, green_lvs) %>% 
-  mutate(species = as.factor(species))
+  select(species, species_full, height, length, width, green_lvs)
 ```
 
 ## Data Visualizations
@@ -136,11 +137,17 @@ Looking at this histogram we see a comb distribution for both species. *Serenoa 
 using plant height, canopy length, canopy width, and green leaves as predictor variables to understand how they can relate to probability of a plant being Serenoa repens or Sabal etonia
 
 ```{r}
-palmetto_blr <- glm(species ~ length + width + height + green_lvs, 
+palmetto_blr <- glm(species_full ~ length + width + height + green_lvs, 
                             data = palmetto_subset, 
                             family = "binomial")
 
-summary(palmetto_blr)
+
+palm_table <- tidy(palmetto_blr)
+
+palm_table %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
 ```
 
 
