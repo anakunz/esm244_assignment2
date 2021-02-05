@@ -2,19 +2,20 @@
 title: "Palmetto Binary Logistic Regression"
 author: "Anastasia Kunz"
 date: "2/2/2021"
-output:
-  html_document
-    code_folding: hide
+output: 
+  html_document:
+    code_folding: hide 
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 library(tidyverse)
 library(here)
+library(patchwork)
+library(broom)
 
 
 ```
-
 
 
 ```{r}
@@ -23,67 +24,125 @@ palmetto <- read_csv(here("data", "palmetto.csv"),
   mutate(height = as.numeric(height)) %>% 
   mutate(length = as.numeric(length)) %>% 
   mutate(width = as.numeric(width)) %>% 
-  mutate(green_lvs = as.numeric(green_lvs))
+  mutate(species = as.numeric(species)) %>% 
+  mutate(green_lvs = as.numeric(green_lvs)) %>% 
+  mutate(species_full = case_when(species == "1" ~ "Serenoa repens",
+                                  species == "2" ~ "Serenoa etonia"))
+
+palmetto_subset <- palmetto %>% 
+  select(species, species_full, height, length, width, green_lvs) %>% 
+  mutate(species = as.factor(species))
 ```
 
-### Data Visualizations
+## Data Visualizations
 
 2-3 finalized data visualizations with fig capts exploring differeences in height canopy length, canopy width, and green leaves for the two species
 
 below each visualization add a short (1 sentence) statement on the takeaway
 
+
 ```{r}
-palmetto_subset <- palmetto %>% 
-  select(species, height, length, width, green_lvs)
+#Height Plot
+height_plot <-ggplot(data = palmetto_subset, aes(x = species_full, y = height))+
+  geom_boxplot()+ 
+  geom_jitter(aes(color= species_full), size=0.3, alpha=0.1) +
+  theme_minimal()+
+  labs(
+    x = "Species",
+    y = "Tree Height (cm)",
+    title = "Tree Height by Species"
+  )+
+  theme(legend.position = "none")
+
+
+# Length Plot
+length_plot <- ggplot(data = palmetto_subset, aes(x = species_full, y = length))+
+  geom_boxplot()+
+  geom_jitter(aes(color= species_full), size=0.3, alpha=0.1) +
+  theme_minimal()+
+  labs(
+    x = "Species",
+    y = "Tree Canopy Length (cm)",
+    title = "Tree Canopy Length by Species"
+  )+
+  theme(legend.position = "none")
+
+
+# Width Plot
+width_plot <-ggplot(data = palmetto_subset, aes(x = species_full, y = width))+
+  geom_boxplot()+
+  geom_jitter(aes(color= species_full), size=0.3, alpha=0.1) +
+  theme_minimal()+
+  labs(
+    x = "Species",
+    y = "Tree Canopy Width (cm)",
+    title = "Tree Canopy Width by Species"
+  )+
+   theme(legend.position = "none")
+
+# Green Leaves  BOX Plot
+grn_lvs_plot <- ggplot(data = palmetto_subset, aes(x = species_full, y = green_lvs))+
+  geom_boxplot()+
+  geom_jitter(aes(color= species_full), size=0.3, alpha=0.1) +
+  theme_minimal()+
+  labs(
+    x = "Species",
+    y = "Number of Green Leaves",
+    title = "Number of Green Leaves by Species"
+  )+
+   theme(legend.position = "none")
+
+
 ```
 
 
-height
+```{r, fig.cap= "**Figure 2.** Boxplots comparing the aspects of canopy width (left) and length (right) between two species of palmettos, *Serenoa repens* and *Sabal etonia*."}
+patchwork_lw <- (width_plot+ length_plot)
+patchwork_lw
+```
 
-```{r}
-ggplot(data = palmetto_subset, aes(x = height))+
+#### Canopy Length and Width Analysis
+Between the two species of palmettos, canopy width and canopy length are relatively similar. Canopy length analysis shows that *Serenoa etonia* has slightly higher average canopy length than *Serenoa repens*.
+
+```{r, fig.cap= "**Figure 2.** Boxplots comparing the average and distribution of tree height and the number of green leaves between two species of palmettos, *Serenoa repens* and *Sabal etonia*."}
+patchwork_hg <- (height_plot + grn_lvs_plot)
+patchwork_hg
+```
+
+#### Tree Height and Number of Green Leaves Analysis
+Similar to canopy length and width, tree height also looks relatively similar with a more broad distribution in *Serenoa etonia*. However, when comparing the number of green leaves between the two species we see that on average, *Serenoa repens* has a greater average number of green leaves than *Serenoa etonia*. It is important to note that the distribution of green leaves is not normal, and it is helpful to explore the distribution through a histogram.
+
+```{r, fig.cap= "**Figure 3.** Histogram showing the distribution of the number of green leaves between *Serenoa repens* and *Sabal etonia*."}
+# Green Leaves Plot
+grn_lvs_histogram <- ggplot(data = palmetto_subset, aes(x = green_lvs, fill = species_full))+
   geom_histogram()+
-  facet_wrap(~ species)
-
-ggplot(data = palmetto_subset, aes(x = species, y = height))+
-  geom_boxplot()
+  facet_wrap(~ species_full)+
+  theme_minimal()+
+  labs(
+    x = "Green Leaves (n)",
+    y = "Number of Trees",
+    title = "Number of Green Leaves by Species"
+  )+
+   theme(legend.position = "none")
+grn_lvs_histogram
 ```
 
-```{r}
-ggplot(data = palmetto_subset, aes(x = length))+
-  geom_histogram()+
-  facet_wrap(~ species)
-
-ggplot(data = palmetto_subset, aes(x = species, y = length))+
-  geom_boxplot()
-```
+#### Number of Green Leaves Histogram Analysis
+Looking at this histogram we see a comb distribution for both species. *Serenoa etonia* has a much more concentrated distribution than *Serenoa repens*.
 
 
-```{r}
-ggplot(data = palmetto_subset, aes(x = width))+
-  geom_histogram()+
-  facet_wrap(~ species)
-
-ggplot(data = palmetto_subset, aes(x = species, y = width))+
-  geom_boxplot()
-```
-
-
-
-```{r}
-ggplot(data = palmetto_subset, aes(x = green_lvs))+
-  geom_histogram()+
-  facet_wrap(~ species)
-
-ggplot(data = palmetto_subset, aes(x = species, y = green_lvs))+
-  geom_boxplot()
-```
-
-
-
-#### binary logistic regression
+## Binary Logistic Regression
 
 using plant height, canopy length, canopy width, and green leaves as predictor variables to understand how they can relate to probability of a plant being Serenoa repens or Sabal etonia
+
+```{r}
+palmetto_blr <- glm(species ~ length + width + height + green_lvs, 
+                            data = palmetto_subset, 
+                            family = "binomial")
+
+summary(palmetto_blr)
+```
+
 
 
 #### Section evaluating how successful this mdel is

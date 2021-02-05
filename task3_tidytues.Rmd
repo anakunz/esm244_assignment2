@@ -1,0 +1,61 @@
+---
+title: "Tidy Tuesday Plastic Pollution"
+author: "Anastasia Kunz"
+date: "2/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(cartogram)
+library(ggplot2)
+library(broom)
+library(tweenr)
+library(gganimate)
+library(maptools)
+library(viridis)
+
+```
+
+```{r}
+plastics <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-01-26/plastics.csv')
+```
+
+ideas for tidy tuesday
+cartogram https://www.r-graph-gallery.com/a-smooth-transition-between-chloropleth-and-cartogram.html  or
+https://www.datanovia.com/en/lessons/highchart-interactive-world-map-in-r/
+
+
+```{r}
+long_plastic <- pivot_longer(plastics, c(hdpe, ldpe, o, pet, pp, ps, pvc), names_to = "plastic_type") %>% 
+  filter(country != "EMPTY") %>% 
+  mutate(country = tolower(country))
+
+new_plastic <-plastics %>% 
+  filter(country != "EMPTY") %>% 
+  mutate(country = tolower(country))
+```
+
+
+
+Roadmap:
+data frame to work with: grand total plastic from each country, select(year, country, parent company, grand_total)
+total plastic 2019 - count country total plastic for each 
+
+
+## Wrangling:
+
+```{r}
+plastic_2019 <- new_plastic %>% 
+  filter(year == 2019) %>% 
+  filter(parent_company == "Grand Total")
+
+```
+
+
+```{r}
+data(wrld_simpl)
+plot(wrld_simpl)
+```
+
