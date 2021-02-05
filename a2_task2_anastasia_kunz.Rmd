@@ -154,6 +154,14 @@ palm_table %>%
 
 #### Section evaluating how successful this mdel is
 
+```{r}
+blr_fitted <-palmetto_blr %>% 
+  broom::augment(type.predict = "response")
+
+blr_fitted
+```
+
+
 how successfully can it classify a plant as the correct species using a 50% cutoff
 
 make finalized table
