@@ -108,7 +108,7 @@ patchwork_hg
 ```
 
 #### Tree Height and Number of Green Leaves Analysis
-Similar to canopy length and width, tree height also looks relatively similar with a more broad distribution in *Sabal etonia*. However, when comparing the number of green leaves between the two species we see that on average, *Serenoa repens* has a greater average number of green leaves than *Sabal etonia*. It is important to note that the distribution of green leaves is not normal, and it is helpful to explore the distribution through a histogram.
+Similar to canopy length and width, tree height also looks relatively similar with a more broad distribution in *Serenoa repens*. However, when comparing the number of green leaves between the two species we see that on average, *Serenoa repens* has a greater average number of green leaves than *Sabal etonia*. It is important to note that the distribution of green leaves is not normal, and it is helpful to explore the distribution through a histogram.
 
 ```{r, fig.cap= "**Figure 3.** Histogram showing the distribution of the number of green leaves between *Serenoa repens* and *Sabal etonia*."}
 # Green Leaves Plot

@@ -15,6 +15,12 @@ library(tweenr)
 library(gganimate)
 library(maptools)
 library(viridis)
+library(leaflet)
+library(maps)
+library(sf)
+library(janitor)
+library(tigris)
+library(here)
 
 ```
 
@@ -39,11 +45,6 @@ new_plastic <-plastics %>%
 
 
 
-Roadmap:
-data frame to work with: grand total plastic from each country, select(year, country, parent company, grand_total)
-total plastic 2019 - count country total plastic for each 
-
-
 ## Wrangling:
 
 ```{r}
@@ -55,7 +56,35 @@ plastic_2019 <- new_plastic %>%
 
 
 ```{r}
-data(wrld_simpl)
-plot(wrld_simpl)
+#data(wrld_simpl)
+#plot(wrld_simpl)
 ```
+
+### Exploring spatial
+
+
+
+Try tmap???
+
+```{r}
+world_data <- read_sf(here("country-borders", "99bfd9e7-bb42-4728-87b5-07f8c8ac631c2020328-1-1vef4ev.lu5nk.shp")) %>% 
+  clean_names() %>% 
+  mutate(country_name = str_to_lower(cntry_name))
+world_data %>% st_crs()
+
+```
+
+```{r}
+joined_data <- geo_join(spatial_data = world_data, data_frame = plastic_2019, by_sp = "country_name", by_df = "country", by = NULL, how = "left")
+```
+
+```{r}
+ggplot()+
+  geom_sf(data = joined_data, aes(fill = grand_total))+
+  scale_fill_gradientn(colors = c("yellow", "orange", "red"))+
+  theme_void()+
+  theme(panel.background = element_rect(fill = 'skyblue'))
+```
+
+
 
