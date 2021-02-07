@@ -133,7 +133,7 @@ Looking at this histogram we see a comb distribution for both species. *Sabal et
 
 
 **Table 1.** Binary logistic regression model outputs showing coefficients for each variable used in the model as well as the standard error, statistic and rounded p value.
-```{r fig1, fig.cap= "\\label{fig:fig1}Caption"}
+```{r }
 palmetto_blr <- glm(species_full ~ length + width + height + green_lvs, 
                             data = palmetto_subset, 
                             family = "binomial")
