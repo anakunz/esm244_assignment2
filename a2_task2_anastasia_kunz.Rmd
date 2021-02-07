@@ -29,7 +29,7 @@ palmetto <- read_csv(here("data", "palmetto.csv"),
   mutate(species = as.factor(species)) %>% 
   mutate(green_lvs = as.numeric(green_lvs)) %>% 
   mutate(species_full = case_when(species == "1" ~ "Serenoa repens",
-                                  species == "2" ~ "Serenoa etonia")) %>% 
+                                  species == "2" ~ "Sabal etonia")) %>% 
   mutate(species_full = as.factor(species_full))
 
 palmetto_subset <- palmetto %>% 
@@ -37,10 +37,6 @@ palmetto_subset <- palmetto %>%
 ```
 
 ## Data Visualizations
-
-2-3 finalized data visualizations with fig capts exploring differeences in height canopy length, canopy width, and green leaves for the two species
-
-below each visualization add a short (1 sentence) statement on the takeaway
 
 
 ```{r}
@@ -104,7 +100,7 @@ patchwork_lw
 ```
 
 #### Canopy Length and Width Analysis
-Between the two species of palmettos, canopy width and canopy length are relatively similar. Canopy length analysis shows that *Serenoa etonia* has slightly higher average canopy length than *Serenoa repens*.
+Between the two species of palmettos, canopy width and canopy length are relatively similar. Canopy length analysis shows that *Serenoa etonia* has slightly higher average canopy length than *Sabal repens*.
 
 ```{r, fig.cap= "**Figure 2.** Boxplots comparing the average and distribution of tree height and the number of green leaves between two species of palmettos, *Serenoa repens* and *Sabal etonia*."}
 patchwork_hg <- (height_plot + grn_lvs_plot)
@@ -112,7 +108,7 @@ patchwork_hg
 ```
 
 #### Tree Height and Number of Green Leaves Analysis
-Similar to canopy length and width, tree height also looks relatively similar with a more broad distribution in *Serenoa etonia*. However, when comparing the number of green leaves between the two species we see that on average, *Serenoa repens* has a greater average number of green leaves than *Serenoa etonia*. It is important to note that the distribution of green leaves is not normal, and it is helpful to explore the distribution through a histogram.
+Similar to canopy length and width, tree height also looks relatively similar with a more broad distribution in *Sabal etonia*. However, when comparing the number of green leaves between the two species we see that on average, *Serenoa repens* has a greater average number of green leaves than *Sabal etonia*. It is important to note that the distribution of green leaves is not normal, and it is helpful to explore the distribution through a histogram.
 
 ```{r, fig.cap= "**Figure 3.** Histogram showing the distribution of the number of green leaves between *Serenoa repens* and *Sabal etonia*."}
 # Green Leaves Plot
@@ -130,14 +126,14 @@ grn_lvs_histogram
 ```
 
 #### Number of Green Leaves Histogram Analysis
-Looking at this histogram we see a comb distribution for both species. *Serenoa etonia* has a much more concentrated distribution than *Serenoa repens*.
+Looking at this histogram we see a comb distribution for both species. *Sabal etonia* has a much more concentrated distribution than *Serenoa repens*.
 
 
 ## Binary Logistic Regression
 
-using plant height, canopy length, canopy width, and green leaves as predictor variables to understand how they can relate to probability of a plant being Serenoa repens or Sabal etonia
 
-```{r}
+**Table 1.** Binary logistic regression model outputs showing coefficients for each variable used in the model as well as the standard error, statistic and rounded p value.
+```{r fig1, fig.cap= "\\label{fig:fig1}Caption"}
 palmetto_blr <- glm(species_full ~ length + width + height + green_lvs, 
                             data = palmetto_subset, 
                             family = "binomial")
@@ -153,7 +149,7 @@ palm_table %>%
 
 
 
-#### Section evaluating how successful this mdel is
+#### Model Evaluation
 
 ```{r}
 blr_fitted <-palmetto_blr %>% 
@@ -161,31 +157,34 @@ blr_fitted <-palmetto_blr %>%
 
 blr_matrix <- blr_fitted %>% 
   mutate(predicted = case_when(.fitted >= 0.50 ~"Serenoa repens",
-                               .fitted < 0.50 ~ "Serenoa etonia"))# %>% 
- # select(species_full, predicted) %>% 
-  confusionmatrix <- table(blr_matrix$predicted, blr_matrix$species_full) 
-#confusionmatrix
+                               .fitted < 0.50 ~ "Sabal etonia")) %>% 
+  mutate(correct =  case_when(species_full == predicted ~ "Correct",
+                              TRUE ~ "Incorrect")) %>% 
+  group_by(species_full, correct) %>% 
+  summarize(correct_totals = n()) %>% 
+  pivot_wider(names_from = correct, values_from = correct_totals) %>% 
+  group_by(species_full, Correct, Incorrect) %>% 
+  summarize(total = sum(Correct, Incorrect),
+            percent_correct = (Correct/total*100)) %>% 
+  select(species_full, Correct, Incorrect, percent_correct)
   
-    
 
     
 ```
 
-
+**Table 2.** Binary logistic regression model results showing number of species correctly
+classified, incorrectly classified, and the total percent correctly classified.
 ```{r}
-kbl(confusionmatrix) %>% 
-    kable_styling(bootstrap_options = c("striped", "condensed"), full_width = F) %>% 
-    column_spec(1, bold = TRUE, background = "white") %>% 
-  add_header_above(header = c(" " = 1, "Actual Species" = 2)) %>% 
-  group_rows(group_label = "Predicted Species", start_row = 1, end_row = 2)
+kbl(blr_matrix, col.names = c("Species", "Correct", "Incorrect", "Percent Correct")) %>% 
+    kable_styling(bootstrap_options = c("striped", "condensed"), full_width = T) %>% 
+    column_spec(1, bold = TRUE, background = "white")
+  
+  
   
 
 ```
 
 
-how successfully can it classify a plant as the correct species using a 50% cutoff
-
-make finalized table
 
 
 ### Citation
