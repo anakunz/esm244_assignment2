@@ -139,7 +139,8 @@ palmetto_blr <- glm(species_full ~ length + width + height + green_lvs,
                             family = "binomial")
 
 
-palm_table <- tidy(palmetto_blr)
+palm_table <- tidy(palmetto_blr) %>% 
+  mutate(p.value = case_when(p.value <= 0.0001 ~ "< 0.001"))
 
 palm_table %>% 
   kbl() %>% 

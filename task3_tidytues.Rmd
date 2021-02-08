@@ -79,12 +79,17 @@ joined_data <- geo_join(spatial_data = world_data, data_frame = plastic_2019, by
 ```
 
 ```{r}
-ggplot()+
-  geom_sf(data = joined_data, aes(fill = grand_total))+
-  scale_fill_gradientn(colors = c("yellow", "orange", "red"))+
-  theme_void()+
-  theme(panel.background = element_rect(fill = 'skyblue'))
+#ggplot()+
+#  geom_sf(data = joined_data, aes(fill = grand_total))+
+#  scale_fill_gradientn(colors = c("yellow", "orange", "red"))+
+##  theme_void()+
+#  theme(panel.background = element_rect(fill = 'skyblue'))
 ```
 
 
+```{r}
+leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(lng = -122.6193, lat = 45.3511, popup = "Willamette Falls")
+```
 
