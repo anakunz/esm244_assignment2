@@ -100,9 +100,9 @@ patchwork_lw
 ```
 
 #### Canopy Length and Width Analysis
-Between the two species of palmettos, canopy width and canopy length are relatively similar. Canopy length analysis shows that *Serenoa etonia* has slightly higher average canopy length than *Sabal repens*.
+Between the two species of palmettos, canopy width and canopy length are relatively similar. Canopy length analysis shows that *Sabal etonia* has slightly higher average canopy width than *Serenoa repens*. This same dynamic is more pronounced in canopy length, with *Sabal etonia* having greater length than *Serenoa repens*.
 
-```{r, fig.cap= "**Figure 2.** Boxplots comparing the average and distribution of tree height and the number of green leaves between two species of palmettos, *Serenoa repens* and *Sabal etonia*."}
+```{r, fig.cap= "**Figure 2.** Boxplots comparing the average and distribution of tree height (left) and the number of green leaves (right) between two species of palmettos, *Serenoa repens* and *Sabal etonia*."}
 patchwork_hg <- (height_plot + grn_lvs_plot)
 patchwork_hg
 ```
